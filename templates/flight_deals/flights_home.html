@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Deals from BHO</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background: #fafafa;
+        }
+        h1 { text-align: center; }
+        .deal-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+        }
+        .deal-found { border-left: 5px solid #22c55e; }
+        .no-deal { border-left: 5px solid #ef4444; }
+        .price { font-size: 1.2em; font-weight: bold; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-link">← Back to Portfolio</a>
+
+    <h1>Flight Deals from BHO</h1>
+    <p style="text-align:center; color:#666;">Last updated: {{ last_updated }}</p>
+
+    {% for deal in deals %}
+        <div class="deal-card {% if deal.is_deal %}deal-found{% else %}no-deal{% endif %}">
+            <h2>{{ deal.city }}: <span class="price">INR {{ deal.price }}</span></h2>
+
+            {% if deal.is_deal %}
+                <p style="color:#22c55e;"><strong>Lower price flight found to {{ deal.city }}!</strong></p>
+                <p>Low price alert! Only INR {{ deal.price }} to fly</p>
+                <p>from {{ deal.origin }} to {{ deal.destination }}</p>
+                <p>{{ deal.out_date }} until {{ deal.return_date }}</p>
+            {% else %}
+                <p>Uh oh !! The flight prices aren't lesser than the cheapest price you entered.</p>
+                <p>Current price - INR {{ deal.price }} to fly.</p>
+                <p>The price or below you are looking for - INR {{ deal.lowest_price }}</p>
+            {% endif %}
+        </div>
+    {% empty %}
+        <div class="deal-card">
+            <p><strong>No deals found.</strong></p>
+            <p>Run the update task first: <code>python3.13 manage.py update_deals</code></p>
+        </div>
+    {% endfor %}
+
+    <a href="{% url 'flight_deals:refresh' %}">Refresh Data</a>
+
+</body>
+</html>
